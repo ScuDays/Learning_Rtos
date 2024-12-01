@@ -1,0 +1,12 @@
+.\objects\tmutex.o: Source\tMutex.c
+.\objects\tmutex.o: Source\tMutex.h
+.\objects\tmutex.o: Source\tConfig.h
+.\objects\tmutex.o: Source\tEvent.h
+.\objects\tmutex.o: Source\tLib.h
+.\objects\tmutex.o: D:\Keil5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\tmutex.o: Source\tTask.h
+.\objects\tmutex.o: Source\myRtos.h
+.\objects\tmutex.o: Source\tSem.h
+.\objects\tmutex.o: Source\tMbox.h
+.\objects\tmutex.o: Source\tMemBlock.h
+.\objects\tmutex.o: Source\tTimer.h
