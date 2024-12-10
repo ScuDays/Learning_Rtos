@@ -32,7 +32,8 @@ typedef struct _tSemInfo
 //  初始化信号量
 void tSemInit(tSem *sem, uint32_t startCount, uint32_t maxCount);
 
-// 等待指定的信号量
+// 等待信号量
+// waitTicks 最大等待ticks数，若为0则可无限等待
 uint32_t tSemWait(tSem *sem, uint32_t waitTicks);
 
 // 获取信号量，如果信号量计数不可用，则立即退回

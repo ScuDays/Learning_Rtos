@@ -28,8 +28,8 @@ void tTaskInit(tTask *task, void (*entry)(void *), void *param, uint32_t prio, t
   task->delayTicks = 0;
   task->prio = prio;
   // 初始化时间片
-  task->slice = TINYOS_SLICE_MAX;
-  task->state = TINYOS_TASK_STATE_RDY;
+  task->slice = MYRTOS_SLICE_MAX;
+  task->state = MYRTOS_TASK_STATE_RDY;
   // 初始化挂起次数
   task->suspendCount = 0;
   // 设置清理函数
@@ -52,11 +52,11 @@ void tTaskInit(tTask *task, void (*entry)(void *), void *param, uint32_t prio, t
 void tTaskSuspend(tTask *task)
 {
   uint32_t status = tTaskEnterCritical();
-  if (!(task->state & TINYOS_TASK_STATE_DELAYED))
+  if (!(task->state & MYRTOS_TASK_STATE_DELAYED))
   {
     if (++task->suspendCount <= 1)
     {
-      task->state |= TINYOS_TASK_STATE_SUSPEND;
+      task->state |= MYRTOS_TASK_STATE_SUSPEND;
       tTaskSchedUnRdy(task);
       if (task == currentTask)
       {
@@ -66,15 +66,15 @@ void tTaskSuspend(tTask *task)
   }
   tTaskExitCritical(status);
 }
-
+// 唤醒挂起任务
 void tTaskWakeUp(tTask *task)
 {
   uint32_t status = tTaskEnterCritical();
-  if (task->state & TINYOS_TASK_STATE_SUSPEND)
+  if (task->state & MYRTOS_TASK_STATE_SUSPEND)
   {
     if (--task->suspendCount == 0)
     {
-      task->state &= ~TINYOS_TASK_STATE_SUSPEND;
+      task->state &= ~MYRTOS_TASK_STATE_SUSPEND;
       tTaskSchedRdy(task);
       tTaskSched();
     }
@@ -96,12 +96,12 @@ void tTaskForceDelete(tTask *task)
   uint32_t status = tTaskEnterCritical();
 
   // 如果任务处于延时状态，则从延时队列中删除
-  if (task->state & TINYOS_TASK_STATE_DELAYED)
+  if (task->state & MYRTOS_TASK_STATE_DELAYED)
   {
     tTimeTaskRemove(task);
   }
   // 如果任务不处于挂起状态，那么就是就绪态，从就绪表中删除
-  else if (!(task->state & TINYOS_TASK_STATE_SUSPEND))
+  else if (!(task->state & MYRTOS_TASK_STATE_SUSPEND))
   {
     tTaskSchedRemove(task);
   }

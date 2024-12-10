@@ -9,7 +9,7 @@ void tMutexInit(tMutex *mutex)
     mutex->lockedCount = 0;
     mutex->owner = (tTask *)0;
     // 拥有者的原始优先级
-    mutex->ownerOriginalPrio = TINYOS_PRO_COUNT;
+    mutex->ownerOriginalPrio = MYRTOS_PRO_COUNT;
 }
 
 // 等待信号量
@@ -48,7 +48,7 @@ uint32_t tMutexWait(tMutex *mutex, uint32_t waitTicks)
 
                 // 如果当前任务的优先级比拥有者优先级更高，则使用优先级继承
                 // 提升原拥有者的优先
-                if (owner->state == TINYOS_TASK_STATE_RDY)
+                if (owner->state == MYRTOS_TASK_STATE_RDY)
                 {
                     // 任务处于就绪状态时，更改任务在就绪表中的位置
                     tTaskSchedUnRdy(owner);
@@ -135,7 +135,7 @@ uint32_t tMutexNotify(tMutex *mutex)
     if (mutex->ownerOriginalPrio != mutex->owner->prio)
     {
         // 有发生优先级继承，恢复拥有者的优先级
-        if (mutex->owner->state == TINYOS_TASK_STATE_RDY)
+        if (mutex->owner->state == MYRTOS_TASK_STATE_RDY)
         {
             // 任务处于就绪状态时，更改任务在就绪表中的位置
             tTaskSchedUnRdy(mutex->owner);
@@ -181,7 +181,7 @@ uint32_t tMutexDestroy(tMutex *mutex)
         if (mutex->ownerOriginalPrio != mutex->owner->prio)
         {
             // 有发生优先级继承，恢复拥有者的优先级
-            if (mutex->owner->state == TINYOS_TASK_STATE_RDY)
+            if (mutex->owner->state == MYRTOS_TASK_STATE_RDY)
             {
                 // 任务处于就绪状态，
                 // 修改任务在就绪表中的位置，恢复优先级位置
@@ -224,7 +224,7 @@ void tMutexGetInfo(tMutex *mutex, tMutexInfo *info)
     }
     else
     {
-        info->inheritedPrio = TINYOS_PRO_COUNT;
+        info->inheritedPrio = MYRTOS_PRO_COUNT;
     }
     info->owner = mutex->owner;
     info->lockedCount = mutex->lockedCount;

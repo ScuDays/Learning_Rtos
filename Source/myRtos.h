@@ -41,11 +41,19 @@ void tTaskSchedInit(void);
 void tTaskSchedDisable(void);
 // 允许任务调度
 void tTaskSchedEnable(void);
+// 插入到就绪列表，在位图中设置该任务的位
 void tTaskSchedRdy(tTask *task);
 void tTaskSchedUnRdy(tTask *task);
+
+
 void tTaskSched(void);
+
+
+
 void tTimeTaskWait(tTask *task, uint32_t ticks);
 void tTimeTaskWakeUp(tTask *task);
+
+
 void tTaskSystemTickHandler(void);
 void tTaskDelay(uint32_t delay);
 

@@ -1,6 +1,8 @@
 #include "tSem.h"
 #include "myRtos.h"
 // 初始化信号量
+// startCount 初始的计数,资源初始的数值
+// maxCount   资源的最大值
 void tSemInit(tSem *sem, uint32_t startCount, uint32_t maxCount)
 {
 	tEventInit(&sem->event, tEventTypeSem);
@@ -19,6 +21,7 @@ void tSemInit(tSem *sem, uint32_t startCount, uint32_t maxCount)
 	}
 }
 // 等待信号量
+// waitTicks 最大等待ticks数，若为0则可无限等待
 uint32_t tSemWait(tSem *sem, uint32_t waitTicks)
 {
 	uint32_t status = tTaskEnterCritical();

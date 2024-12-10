@@ -97,6 +97,7 @@ uint32_t tMboxNotify(tMbox *mbox, void *msg, uint32_t notifyOption)
 	else
 	{
 		// 如果没有任务等待的话，将消息插入到缓冲区中
+		// 如果消息满了，返回错误。
 		if (mbox->count >= mbox->maxCount)
 		{
 			tTaskExitCritical(status);

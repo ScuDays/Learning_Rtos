@@ -61,6 +61,7 @@ typedef struct _tTimerInfo
     // 定时器状态
     tTimerState state;
 } tTimerInfo;
+
 // 软硬定时器
 // 硬的，在systick中处理，延迟小，要求处理函数耗时短，避免中断处理函数事件过长。
 #define TIMER_CONFIG_TYPE_HARD (1 << 0)
@@ -78,7 +79,7 @@ void tTimerStart(tTimer *timer);
 // 终止定时器
 void tTimerStop(tTimer *timer);
 
-// 通知定时模块，系统节拍tick增加
+// 通知定时模块进行处理
 void tTimerModuleTickNotify(void);
 
 // 定时器模块初始化

@@ -4,7 +4,7 @@ tTask *currentTask;
 tTask *nextTask;
 
 tBitmap taskPrioBitmap;
-tList taskTable[TINYOS_PRO_COUNT];
+tList taskTable[MYRTOS_PRO_COUNT];
 
 // 延时队列
 tList tTaskDelayedList;
@@ -22,7 +22,7 @@ void tTaskSchedInit(void)
 {
     schedLockCount = 0;
     tBitmapInit(&taskPrioBitmap);
-    for (int i = 0; i < TINYOS_PRO_COUNT; i++)
+    for (int i = 0; i < MYRTOS_PRO_COUNT; i++)
     {
         tListInit(&taskTable[i]);
     }
@@ -67,14 +67,14 @@ void tTimeTaskWait(tTask *task, uint32_t ticks)
 {
     task->delayTicks = ticks;
     tListAddLast(&tTaskDelayedList, &(task->delayNode));
-    task->state |= TINYOS_TASK_STATE_DELAYED;
+    task->state |= MYRTOS_TASK_STATE_DELAYED;
 }
 
 // 从延时列表移除，设置任务进入唤醒状态
 void tTimeTaskWakeUp(tTask *task)
 {
     tListRemove(&tTaskDelayedList, &(task->delayNode));
-    task->state &= ~TINYOS_TASK_STATE_DELAYED;
+    task->state &= ~MYRTOS_TASK_STATE_DELAYED;
 }
 // 将延时的任务从延时队列中移除
 void tTimeTaskRemove(tTask *task)
@@ -99,7 +99,7 @@ void tTaskSchedUnRdy(tTask *task)
 }
 // 将任务从就绪列表中移除
 // 和tTaskSchedUnRdy()不是一样的吗？
-// 为了扩展性
+// 这是为了扩展性
 void tTaskSchedRemove(tTask *task)
 {
     tListRemove(&taskTable[task->prio], &(task->linkNode));
@@ -139,10 +139,11 @@ void tTaskSystemTickHandler()
             tListRemoveFirst(&taskTable[currentTask->prio]);
             tListAddLast(&taskTable[currentTask->prio], &(currentTask->linkNode));
 
-            currentTask->slice = TINYOS_SLICE_MAX;
+            currentTask->slice = MYRTOS_SLICE_MAX;
         }
     }
     tTaskExitCritical(status);
+    // 处理中断
     tTimerModuleTickNotify();
     tTaskSched();
 }
@@ -151,7 +152,7 @@ void tTaskSched()
 {
     uint32_t status = tTaskEnterCritical();
 
-    // 空闲任务直接返回
+    // 如果调度器被上锁，直接返回。
     if (schedLockCount > 0)
     {
         tTaskExitCritical(status);
@@ -171,7 +172,7 @@ void tTaskSched()
 }
 
 tTask tTaskIdle;
-tTaskStack taskIdleEnv[TINYOS_IDLETASK_STACK_SIZE];
+tTaskStack taskIdleEnv[MYRTOS_IDLETASK_STACK_SIZE];
 
 tTask *idleTask;
 void idleTaskEntry(void *param)
@@ -189,7 +190,7 @@ int main()
     tInitApp();
     // 初始化定时器模块
     tTimerModuleInit();
-    tTaskInit(&tTaskIdle, idleTaskEntry, (void *)0x2222222, TINYOS_PRO_COUNT - 1, &taskIdleEnv[TINYOS_IDLETASK_STACK_SIZE]);
+    tTaskInit(&tTaskIdle, idleTaskEntry, (void *)0x2222222, MYRTOS_PRO_COUNT - 1, &taskIdleEnv[MYRTOS_IDLETASK_STACK_SIZE]);
 
     idleTask = &tTaskIdle;
 

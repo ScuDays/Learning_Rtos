@@ -13,8 +13,12 @@ static tSem tTimerProtectSem;
 // 软定时器任务与中断同步的计数信号量
 static tSem tTimerTickSem;
 
-// delayTicks：定时器初始启动的延时ticks数
+// delayTicks 定时器初始启动的延时ticks数
 // durationTicks 给周期性定时器用的周期tick数
+// timerFunc 定时器回调函数
+// arg 传递给定时器回调函数的参数
+// timerFunc 定时器回调函数
+// config 定时器的初始配置,配置软硬定时器
 void tTimerInit(tTimer *timer, uint32_t delayTicks, uint32_t durationTicks,
                 void (*timerFunc)(void *arg), void *arg, uint32_t config)
 {
@@ -102,7 +106,7 @@ void tTimerStop(tTimer *timer)
     }
 }
 
-// 每次硬中断中被调用，中断同时，软中断任务被唤醒，也会调用这个函数
+// 硬中断中断处理函数，处理硬中断的同时，通过信号量唤醒一次软中断，软中断任务被唤醒，也会调用这个函数
 // 遍历指定的定时器列表，调用各个定时器处理函数
 static void tTimerCallFuncList(tList *timerList)
 {
@@ -142,7 +146,7 @@ static void tTimerCallFuncList(tList *timerList)
 
 // 处理软定时器列表的任务
 static tTask tTimeTask;
-static tTaskStack tTimerTaskStack[TINYOS_TIMERTASK_STACK_SIZE];
+static tTaskStack tTimerTaskStack[MYRTOS_TIMERTASK_STACK_SIZE];
 
 static void tTimerSoftTask(void *param)
 {
@@ -162,7 +166,7 @@ static void tTimerSoftTask(void *param)
     }
 }
 
-// 通知定时模块，系统节拍tick增加
+// 通知定时模块进行处理
 void tTimerModuleTickNotify(void)
 {
     uint32_t status = tTaskEnterCritical();
@@ -181,14 +185,16 @@ void tTimerModuleInit(void)
 {
     tListInit(&tTimerHardList);
     tListInit(&tTimerSoftList);
+    // 保护信号量
     tSemInit(&tTimerProtectSem, 1, 1);
+    // 处理信号量
     tSemInit(&tTimerTickSem, 0, 0);
 
-#if TINYOS_TIMERTASK_PRIO >= (TINYOS_PRO_COUNT - 1)
-#error "The proprity of timer task must be greater then (TINYOS_PRO_COUNT - 1)"
+#if MYRTOS_TIMERTASK_PRIO >= (MYRTOS_PRO_COUNT - 1)
+#error "The proprity of timer task must be greater then (MYRTOS_PRO_COUNT - 1)"
 #endif
     tTaskInit(&tTimeTask, tTimerSoftTask, (void *)0,
-              TINYOS_TIMERTASK_PRIO, &tTimerTaskStack[TINYOS_TIMERTASK_STACK_SIZE]);
+              MYRTOS_TIMERTASK_PRIO, &tTimerTaskStack[MYRTOS_TIMERTASK_STACK_SIZE]);
 }
 
 //  查询信息

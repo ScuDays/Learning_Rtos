@@ -2,16 +2,16 @@
 #define TTASK_H
 
 // 代表进程的延时状态
-#define TINYOS_TASK_STATE_RDY 0
+#define MYRTOS_TASK_STATE_RDY 0
 // 代表任务是否被删除
-#define TINYOS_TASK_STATE_DESTROYED (1 << 0)
+#define MYRTOS_TASK_STATE_DESTROYED (1 << 0)
 // 代表任务是否进入延时状态
-#define TINYOS_TASK_STATE_DELAYED (1 << 1)
+#define MYRTOS_TASK_STATE_DELAYED (1 << 1)
 // 代表任务是否进入挂起状态
-#define TINYOS_TASK_STATE_SUSPEND (1 << 2)
+#define MYRTOS_TASK_STATE_SUSPEND (1 << 2)
 
 // 高16位为事件等待的控制位，标志任务在等待什么事件
-#define TINYOS_TASK_WAIT_MASK (0xFF << 16)
+#define MYRTOS_TASK_WAIT_MASK (0xFF << 16)
 
 struct _tEvent;
 
@@ -64,6 +64,7 @@ typedef struct _tTaskInfo
 
 void tTaskInit(tTask *task, void (*entry)(void *), void *param, uint32_t prio, tTaskStack *stack);
 void tTaskSuspend(tTask *task);
+// 唤醒挂起任务
 void tTaskWakeUp(tTask *task);
 // 设置任务被删除时调用的清理函数
 void tTaskSetCleanCallFunc(tTask *task, void (*clean)(void *param), void *param);

@@ -45,7 +45,7 @@ tTask *tEventWakeUp(tEvent *event, void *msg, uint32_t result)
         task->waitEvent = (tEvent *)0;
         task->eventMsg = msg;
         task->waitEventResult = result;
-        task->state &= ~TINYOS_TASK_WAIT_MASK;
+        task->state &= ~MYRTOS_TASK_WAIT_MASK;
 
         if (task->delayTicks != 0)
         {
@@ -72,7 +72,7 @@ void tEventWakeUpSpecific(tEvent *event, tTask *task, void *msg, uint32_t result
     task->waitEvent = (tEvent *)0;
     task->eventMsg = msg;
     task->waitEventResult = result;
-    task->state &= ~TINYOS_TASK_WAIT_MASK;
+    task->state &= ~MYRTOS_TASK_WAIT_MASK;
     // 任务申请了超时等待，这里检查下，将其从延时队列中移除
     if (task->delayTicks != 0)
     {
@@ -94,7 +94,7 @@ void tEventRemoveTask(tTask *task, void *msg, uint32_t result)
     task->eventMsg = msg;
     task->waitEventResult = result;
     // 清除标志位
-    task->state &= ~TINYOS_TASK_WAIT_MASK;
+    task->state &= ~MYRTOS_TASK_WAIT_MASK;
 
     tTaskExitCritical(status);
 }
@@ -121,7 +121,7 @@ uint32_t tEventRemoveAll(tEvent *event, void *msg, uint32_t result)
         task->waitEvent = (tEvent *)0;
         task->eventMsg = msg;
         task->waitEventResult = result;
-        task->state &= ~TINYOS_TASK_WAIT_MASK;
+        task->state &= ~MYRTOS_TASK_WAIT_MASK;
 
         // 任务申请了超时等待，这里检查下，将其从延时队列中移除
         if (task->delayTicks != 0)
